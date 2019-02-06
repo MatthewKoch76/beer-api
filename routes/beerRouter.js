@@ -1,16 +1,71 @@
 const express = require('express');
 const beerRouter = express.Router();
+const Beer = require('../models/beer');
 
-beerRouter.get('/', (req,res)=>{
-    res.send('(pretend you just got a list of beers)');
+beerRouter.get('/:beer_id', (req, res) => {
+    Beer.findById(req.params.beer_id, (err, beer) => {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json(beer);
+        }
+    })
 });
 
-beerRouter.post('/', (req,res)=>{
-    console.log(req.body);
-    res.send(`Saved your ${req.body.name} to the DB `);
+beerRouter.put('/:beer_id', (req, res) => {
+    Beer.findById(req.params.beer_id, (err, beer) => {
+        if (err) {
+            res.send(err)
+        }
+
+        beer.name = req.body.name
+        beer.rating = req.body.rating
+        beer.save((err, document) => {
+            if (err) {
+                res.status(400).send(err)
+            }
+            res.status(200).json(`Beer posted!\n${document}`)
+        })
+    })
+})
+
+beerRouter.delete('/:beer_id', (req, res) => {
+    Beer.deleteOne({
+        _id: req.params.beer_id
+    }, (err) => {
+        if (err) {
+            res.send(err)
+        } else {
+            res.send('You successfully deleted beer: ' + req.params.beer_id)
+        }
+    })
+})
+
+
+beerRouter.get('/', (req, res) => {
+    Beer.find((err, beers) => {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json(beers);
+        }
+    })
 });
 
-beerRouter.use('/', (req, res)=>{
+beerRouter.post('/', (req, res) => {
+    let beer = new Beer();
+    beer.name = req.body.name;
+    beer.rating = req.body.rating;
+    beer.save((err, document) => {
+        if (err) {
+            res.status(400).send(err);
+        } else {
+            res.status(200).send(`Saved your ${document}`);
+        }
+    })
+});
+
+beerRouter.use('/', (req, res) => {
     res.send('Beer router is working!');
 });
 

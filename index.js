@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const beerRouter = require('./routes/beerRouter');
+const breweryRouter = require('./routes/breweryRouter');
 const mongoose = require('mongoose');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -9,11 +10,21 @@ app.use(express.json());
 
 app.use('/api/beers', beerRouter);
 
+app.use('/api/breweries', breweryRouter);
+
 app.use('/', (req, res) => {
   res.send('Hello!');
 })
 
 ////////////////////////////////////
+
+mongoose.connect('mongodb://localhost:27017/breweries', { useNewUrlParser: true })
+mongoose.connection.on('connected', () => {
+   console.log('Connected to "breweries" database');
+})
+mongoose.connection.on('error', (err) => {
+   console.log(`Got an error!:\n${err}`);
+})
 
 mongoose.connect('mongodb://localhost:27017/beers', { useNewUrlParser: true })
 mongoose.connection.on('connected', () => {
