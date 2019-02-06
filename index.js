@@ -18,14 +18,6 @@ app.use('/', (req, res) => {
 
 ////////////////////////////////////
 
-mongoose.connect('mongodb://localhost:27017/breweries', { useNewUrlParser: true })
-mongoose.connection.on('connected', () => {
-   console.log('Connected to "breweries" database');
-})
-mongoose.connection.on('error', (err) => {
-   console.log(`Got an error!:\n${err}`);
-})
-
 mongoose.connect('mongodb://localhost:27017/beers', { useNewUrlParser: true })
 mongoose.connection.on('connected', () => {
    console.log('Connected to "beers" database');
